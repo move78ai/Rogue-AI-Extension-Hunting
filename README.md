@@ -1,5 +1,8 @@
 Rogue-AI-Extension-Hunting
 
+![github](https://github.com/user-attachments/assets/a179f83a-3058-4467-b35e-2bce1ca1a906)
+
+
 Hunting Rogue AI Extensions
 Detection Engineering is a tactical function of a cybersecurity defense program that involves the design, implementation, and operation of detective controls with the goal of proactively identifying malicious or unauthorized activity. This repository provides SIEM threat hunting queries (Splunk, Sentinel, Elastic) to detect rogue browser extensions and info-stealers.
  
@@ -12,5 +15,6 @@ Splunk: SPL queries for tracking Sysmon Event Code 11 drops, anomalous logins, a
 Sentinel: KQL queries targeting DeviceFileEvents to detect malicious .crx extension drops.
 
 Elastic: EQL sequence rules correlating .crx file creations with C2 beaconing.
+
 
 IOCs: Cryptographic extension IDs and known exfiltration domains for ingestion into your threat intelligence platforms.
