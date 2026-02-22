@@ -1,0 +1,28 @@
+// 1. Chromium Browser Extension Installation Tracking
+// Looks at the DeviceFileEvents table to identify new Chromium browser extensions being installed in Webstore Downloads.
+let MaliciousExtensionIDs = dynamic([
+    "fnmihdojmnkclgjpcoonokmkhjpjechg", 
+    "inhcgfpbfdjbjogdfjbclgolkmhnooop",
+    "ceibjdigmfbbgcpkkdpmjokkokklodmc",
+    "kkodiihpgodmdankclfibbiphjkfdenh"
+]);
+DeviceFileEvents
+
+| where ActionType == "FileCreated"
+| where FolderPath contains "Webstore Downloads" or FolderPath contains "\\Extensions\\"
+| where FileName endswith ".crx" or FileName == "manifest.json"
+| extend ExtensionId = extract(@"(?i)Downloads[\\/]|Webstore Downloads[\\/]([a-z]{32})", 1, FolderPath)
+| extend ExtensionId = iff(isempty(ExtensionId), extract(@"\\Extensions\\([a-z]{32})", 1, FolderPath), ExtensionId)
+| extend IsMalicious = iff(ExtensionId in (MaliciousExtensionIDs), "True", "False")
+| project TimeGenerated, DeviceName, InitiatingProcessAccountName, ActionType, FolderPath, FileName, ExtensionId, IsMalicious
+| where IsMalicious == "True"
+
+// 2. Session Token Replay / Cookie Theft Detection
+// Checks mismatches in OS vs UserAgent in SigninLogs and AADNonInteractiveUserSignInLogs.
+union SigninLogs, AADNonInteractiveUserSignInLogs
+
+| extend operatingSystem = tostring(parse_json(DeviceDetail).operatingSystem)
+| extend browser = tostring(parse_json(DeviceDetail).browser)
+| summarize IPs = make_set(IPAddress), UAs = make_set(UserAgent) by CorrelationId, UserPrincipalName
+| where array_length(IPs) > 1 or array_length(UAs) > 1
+| project UserPrincipalName, IPs, UAs, CorrelationId

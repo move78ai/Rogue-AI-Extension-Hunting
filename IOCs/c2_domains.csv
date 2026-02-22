@@ -1,0 +1,7 @@
+Domain,Description
+chatsaigpt[.]com,Primary exfiltration domain for ChatGPT/DeepSeek extensions.
+deepaichats[.]com,Secondary exfiltration domain for ChatGPT/DeepSeek extensions.
+chataigpt[.]pro,Fallback C2 infrastructure.
+chatgptsidebar[.]pro,Typo-squatted staging domain.
+deepseek[.]ai,Spoofed API endpoint.
+chatgptbuddy[.]com,Legacy campaign domain.

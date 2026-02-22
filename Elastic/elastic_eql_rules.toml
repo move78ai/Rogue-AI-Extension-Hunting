@@ -1,0 +1,9 @@
+# 1. Behavioral Sequence: CRX Payload Drop Followed by C2 Network Beacon
+# EQL sequence rule that detects a.crx file creation followed by a network connection to known malicious C2 domains.[4, 7]
+type = "eql"
+query = '''
+sequence by host.name with maxspan=10m
+  [file where file.extension == "crx" or file.name == "manifest.json"]
+  [network where event.type == "connection" and 
+   destination.domain in ("chatsaigpt.com", "deepaichats.com", "chataigpt.pro", "chatgptsidebar.pro", "deepseek.ai")]
+'''
